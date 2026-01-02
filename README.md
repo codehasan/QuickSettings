@@ -11,6 +11,8 @@ A powerful Android Quick Settings app that provides convenient one-tile access t
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
 
+[<img src="images/get-it-on-github.png" alt='Get it on GitHub' height="80">](https://github.com/codehasan/QuickSettings/releases/latest)
+
 </div>
 
 ## ✨ Features
@@ -99,6 +101,14 @@ cd QuickSettings
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgements
+
+We would like to thank the following resource providers for making this project possible:
+
+- **Icons** - [Huge Icons](https://hugeicons.com/) for providing beautiful and modern icon sets.
+- **Future Graphic** - [Hotpot AI](https://hotpot.ai/) for AI-generated graphics and design elements.
+- **Logo** - [SVG Repo](https://www.svgrepo.com/) for high-quality SVG logos and icons.
 
 ---
 
