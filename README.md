@@ -38,6 +38,16 @@ Quick Settings brings essential system controls right to your notification shade
 ### <img src="images/ic_autostart.svg" width="24" height="24" /> Autostart Manager
 - Manage app autostart permission in Chinese roms
 
+## 📱 Screenshots
+
+<div align="center">
+
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.jpg" alt="Quick Settings Screenshot 1" width="200">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.jpg" alt="Quick Settings Screenshot 2" width="200">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.jpg" alt="Quick Settings Screenshot 3" width="200">
+
+</div>
+
 ## 🛠️ Technical Details
 
 ### Architecture
