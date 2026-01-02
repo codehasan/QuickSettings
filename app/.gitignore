@@ -1,0 +1,8 @@
+/build
+/release
+/output
+/obfuscation
+*.properties
+*.jks
+*.keystore
+*.json

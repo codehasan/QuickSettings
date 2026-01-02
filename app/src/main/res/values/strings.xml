@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Quick Settings</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">Error</string>
+    <string name="volume">Volume Controls</string>
+    <string name="lock_screen">Lock Screen</string>
+    <string name="autostart">Autostart Manager</string>
+    <string name="screenshot">Screenshot</string>
+    <string name="power_menu">Power Menu</string>
+    <string name="developer_options">Developer Options</string>
+    <string name="dev_options_disabled_msg">Developer option is disabled. Please enable it in device info settings.</string>
+    <string name="dev_options_error_message">Developer option is not enabled and failed to open device info settings!</string>
+    <string name="accessibility_service_error_message">Quick Settings is not enabled as an accessibility service and failed to open settings!</string>
+    <string name="accessibility_service_disabled_msg">Quick Settings is not enabled as an accessibility service. Please enable it in settings.</string>
+    <string name="accessibility_service_desc">Accessibility service is required to:\n1. Lock the screen\n2. Take screenshots\n3. Open power menu\nAnd more!</string>
+    <string name="autostart_error_message">Autostart settings not found! Please file an issue with your device model and operating system version.</string>
+</resources>
