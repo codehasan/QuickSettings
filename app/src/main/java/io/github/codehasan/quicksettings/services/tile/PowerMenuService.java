@@ -15,7 +15,7 @@ import android.content.Intent;
 import io.github.codehasan.quicksettings.common.BaseAccessibilityTileService;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
 
-public class PowerOffMenuService extends BaseAccessibilityTileService {
+public class PowerMenuService extends BaseAccessibilityTileService {
 
     @Override
     public void onClick() {
