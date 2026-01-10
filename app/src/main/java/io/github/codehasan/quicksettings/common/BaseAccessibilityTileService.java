@@ -10,22 +10,23 @@
 
 package io.github.codehasan.quicksettings.common;
 
+import static io.github.codehasan.quicksettings.util.AccessibilityServiceUtil.isAccessibilityServiceEnabled;
+
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.provider.Settings;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.services.GlobalActionService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
 public class BaseAccessibilityTileService extends BaseInactiveTileService {
 
     @Override
     public void onClick() {
-        if (GlobalActionService.getInstance() == null) {
+        if (!isAccessibilityServiceEnabled(this)) {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.lock_screen)
+                    .setTitle(R.string.app_name)
                     .setMessage(R.string.accessibility_service_disabled_msg)
                     .setPositiveButton(R.string.ok, (dialog, which) -> {
                         openAccessibilityServiceSettings();
