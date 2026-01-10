@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.api.ApkVariantOutputImpl
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -32,6 +34,14 @@ android {
     dependenciesInfo {
         includeInBundle = false
         includeInApk = false
+    }
+
+    applicationVariants.all {
+        this.outputs
+            .map { it as ApkVariantOutputImpl }
+            .forEach { output ->
+                output.outputFileName = " Quick_Settings_v${this.versionName}-${this.name}.apk"
+            }
     }
 }
 
