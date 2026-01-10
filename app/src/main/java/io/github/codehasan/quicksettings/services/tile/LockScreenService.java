@@ -10,6 +10,8 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
+import android.content.Intent;
+
 import io.github.codehasan.quicksettings.common.BaseAccessibilityTileService;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
 
@@ -17,10 +19,9 @@ public class LockScreenService extends BaseAccessibilityTileService {
 
     @Override
     public void onClick() {
-        if (GlobalActionService.getInstance() != null) {
-            GlobalActionService.getInstance().lockScreen();
-            return;
-        }
+        Intent lockScreenIntent = new Intent(this, GlobalActionService.class)
+                .setAction(GlobalActionService.ACTION_LOCK_SCREEN);
+        startService(lockScreenIntent);
         super.onClick();
     }
 }

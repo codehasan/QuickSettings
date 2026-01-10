@@ -10,6 +10,8 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
+import android.content.Intent;
+
 import io.github.codehasan.quicksettings.common.BaseAccessibilityTileService;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
 
@@ -17,10 +19,9 @@ public class PowerOffMenuService extends BaseAccessibilityTileService {
 
     @Override
     public void onClick() {
-        if (GlobalActionService.getInstance() != null) {
-            GlobalActionService.getInstance().openPowerOffMenu();
-            return;
-        }
+        Intent powerMenuIntent = new Intent(this, GlobalActionService.class)
+                .setAction(GlobalActionService.ACTION_POWER_DIALOG);
+        startService(powerMenuIntent);
         super.onClick();
     }
 }

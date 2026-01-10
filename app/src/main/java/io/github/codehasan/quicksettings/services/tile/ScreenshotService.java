@@ -10,6 +10,7 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -24,10 +25,9 @@ public class ScreenshotService extends BaseAccessibilityTileService {
         TileServiceUtil.closePanels(this);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (GlobalActionService.getInstance() != null) {
-                GlobalActionService.getInstance().takeScreenShot();
-                return;
-            }
+            Intent lockScreenIntent = new Intent(this, GlobalActionService.class)
+                    .setAction(GlobalActionService.ACTION_SCREENSHOT);
+            startService(lockScreenIntent);
             super.onClick();
         }, 500);
     }
