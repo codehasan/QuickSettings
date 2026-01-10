@@ -11,6 +11,7 @@ android {
     defaultConfig {
         applicationId = "io.github.codehasan.quicksettings"
         minSdk = 24
+        //noinspection ExpiredTargetSdkVersion
         targetSdk = 32
         versionCode = 3
         versionName = "1.2"
