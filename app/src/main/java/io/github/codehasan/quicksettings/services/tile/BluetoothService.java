@@ -1,6 +1,9 @@
 package io.github.codehasan.quicksettings.services.tile;
 
+import static android.Manifest.permission.BLUETOOTH_CONNECT;
+
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -14,6 +17,8 @@ import android.os.Build;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
+
+import androidx.annotation.RequiresPermission;
 
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
@@ -60,14 +65,15 @@ public class BluetoothService extends TileService {
         unregisterReceiver(bluetoothReceiver);
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onClick() {
         super.onClick();
 
-        if (!isNearbyDevicesGranted()) {
-            showPermissionDialog();
-        } else {
+        if (isNearbyDevicesGranted()) {
             toggleBluetooth();
+        } else {
+            showPermissionDialog();
         }
     }
 
@@ -93,10 +99,13 @@ public class BluetoothService extends TileService {
 
         // Map state: On -> Active, Off/Turning Off -> Inactive
         tile.setState(isEnabled ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
-        tile.setSubtitle(getString(isEnabled ? R.string.on : R.string.off));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            tile.setSubtitle(getString(isEnabled ? R.string.on : R.string.off));
+        }
         tile.updateTile();
     }
 
+    @RequiresPermission(BLUETOOTH_CONNECT)
     private void toggleBluetooth() {
         if (bluetoothAdapter == null) return;
 
@@ -116,7 +125,7 @@ public class BluetoothService extends TileService {
     }
 
     private void showPermissionDialog() {
-        new AlertDialog.Builder(this)
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.bluetooth_disabled_msg)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
@@ -127,6 +136,7 @@ public class BluetoothService extends TileService {
                 })
                 .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
                 .setCancelable(false)
-                .show();
+                .create();
+        showDialog(alertDialog);
     }
 }
