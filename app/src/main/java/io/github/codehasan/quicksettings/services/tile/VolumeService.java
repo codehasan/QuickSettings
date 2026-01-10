@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
@@ -66,7 +67,9 @@ public class VolumeService extends TileService {
 
             // Active if volume > 0, Inactive if 0 (muted)
             tile.setState(currentVolume > 0 ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
-            tile.setSubtitle(valueOf(currentVolume));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                tile.setSubtitle(valueOf(currentVolume));
+            }
         }
 
         tile.updateTile();
