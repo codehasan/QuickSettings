@@ -10,17 +10,41 @@
 
 package io.github.codehasan.quicksettings.services;
 
+import static io.github.codehasan.quicksettings.util.NullSafety.requireNonNullElse;
+
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 public class GlobalActionService extends AccessibilityService {
-    public static final String TAG = "GlobalActionService";
-    private volatile static GlobalActionService instance;
+    public static final String ACTION_LOCK_SCREEN = "lock-screen";
+    public static final String ACTION_POWER_DIALOG = "power-dialog";
+    public static final String ACTION_SCREENSHOT = "screenshot";
 
-    public static GlobalActionService getInstance() {
-        return instance;
+    @Override
+    public void onAccessibilityEvent(AccessibilityEvent event) {
+    }
+
+    @Override
+    public void onInterrupt() {
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String action = requireNonNullElse(intent.getAction(), "");
+
+        switch (action) {
+            case ACTION_LOCK_SCREEN:
+                lockScreen();
+                break;
+            case ACTION_POWER_DIALOG:
+                showPowerDialog();
+                break;
+            case ACTION_SCREENSHOT:
+                takeScreenShot();
+                break;
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     public void lockScreen() {
@@ -31,35 +55,7 @@ public class GlobalActionService extends AccessibilityService {
         performGlobalAction(GLOBAL_ACTION_TAKE_SCREENSHOT);
     }
 
-    public void openPowerOffMenu() {
+    public void showPowerDialog() {
         performGlobalAction(GLOBAL_ACTION_POWER_DIALOG);
-    }
-
-    @Override
-    public void onAccessibilityEvent(AccessibilityEvent event) {
-        Log.d(TAG, "Accessibility event received: " + event.getEventType());
-    }
-
-    @Override
-    public void onInterrupt() {
-        Log.d(TAG, "Accessibility service interrupted");
-    }
-
-    @Override
-    protected void onServiceConnected() {
-        instance = this;
-        super.onServiceConnected();
-    }
-
-    @Override
-    public void onRebind(Intent intent) {
-        instance = this;
-        super.onRebind(intent);
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        instance = null;
-        return true;
     }
 }
