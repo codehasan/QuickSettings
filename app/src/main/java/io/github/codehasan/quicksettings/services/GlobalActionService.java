@@ -10,7 +10,7 @@
 
 package io.github.codehasan.quicksettings.services;
 
-import static io.github.codehasan.quicksettings.util.NullSafety.requireNonNullElse;
+import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
@@ -31,18 +31,18 @@ public class GlobalActionService extends AccessibilityService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String action = requireNonNullElse(intent.getAction(), "");
-
-        switch (action) {
-            case ACTION_LOCK_SCREEN:
-                lockScreen();
-                break;
-            case ACTION_POWER_DIALOG:
-                showPowerDialog();
-                break;
-            case ACTION_SCREENSHOT:
-                takeScreenShot();
-                break;
+        if (intent != null && !isNullOrEmpty(intent.getAction())) {
+            switch (intent.getAction()) {
+                case ACTION_LOCK_SCREEN:
+                    lockScreen();
+                    break;
+                case ACTION_POWER_DIALOG:
+                    showPowerDialog();
+                    break;
+                case ACTION_SCREENSHOT:
+                    takeScreenShot();
+                    break;
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
