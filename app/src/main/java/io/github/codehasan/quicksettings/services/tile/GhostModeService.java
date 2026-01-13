@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.services.common.BaseStatefulTileService;
+import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
 public class GhostModeService extends BaseStatefulTileService {
     private BluetoothAdapter bluetoothAdapter;
@@ -190,6 +191,8 @@ public class GhostModeService extends BaseStatefulTileService {
     private boolean isRootAvailable() {
         try {
             Process p = Runtime.getRuntime().exec(new String[]{"su", "-c", "id"});
+            // Close the panels
+            TileServiceUtil.closePanels(this);
             int exitCode = p.waitFor();
             return exitCode == 0;
         } catch (Exception e) {
