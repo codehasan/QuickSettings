@@ -13,11 +13,17 @@ package io.github.codehasan.quicksettings.activity;
 import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import io.github.codehasan.quicksettings.R;
 
 public class PermissionActivity extends Activity {
     public static final String EXTRA_PERMISSIONS = "permissions";
@@ -30,6 +36,26 @@ public class PermissionActivity extends Activity {
 
         if (isNullOrEmpty(permissions)) {
             finish();
+            return;
+        }
+
+        if (permanentlyDenied(permissions)) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.permission_permanently_denied_msg)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        dialog.dismiss();
+                        Intent settings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                .setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(settings);
+                        finish();
+                    })
+                    .setNeutralButton(R.string.cancel, (dialog, which) -> {
+                        dialog.dismiss();
+                        finish();
+                    })
+                    .setCancelable(false)
+                    .show();
             return;
         }
 
@@ -46,6 +72,17 @@ public class PermissionActivity extends Activity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         finish();
     }
+
+    private boolean permanentlyDenied(String[] permissions) {
+        for (String p : permissions) {
+            if (checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED &&
+                    !shouldShowRequestPermissionRationale(p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private boolean allGranted(String[] permissions) {
         for (String p : permissions) {
