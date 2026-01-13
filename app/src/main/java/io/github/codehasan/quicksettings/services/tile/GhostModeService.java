@@ -24,6 +24,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -112,9 +113,34 @@ public class GhostModeService extends BaseStatefulTileService {
             return;
         }
 
+        File rootMarker = new File(
+                createDeviceProtectedStorageContext().getFilesDir(), "root_granted");
+        boolean previouslyGranted = rootMarker.exists();
+
+        // If marker is missing, this might be the first time.
+        // Collapse the panel so the user can see the Superuser popup.
+        if (!previouslyGranted) {
+            TileServiceUtil.closePanels(this);
+        }
+
+        // Perform the blocking root check
+        // If we just collapsed the panel, this prompt will be visible.
         if (!isRootAvailable()) {
+            // If check failed but file existed (permission revoked?), delete the file
+            if (previouslyGranted) {
+                rootMarker.delete();
+            }
             showRootUnavailableDialog();
             return;
+        }
+
+        // Root is available. If marker was missing, create it now.
+        if (!previouslyGranted) {
+            try {
+                rootMarker.createNewFile();
+            } catch (IOException e) {
+                Log.e("GhostModeService", "Failed to create root_granted file", e);
+            }
         }
 
         executor.execute(() -> {
@@ -191,8 +217,6 @@ public class GhostModeService extends BaseStatefulTileService {
     private boolean isRootAvailable() {
         try {
             Process p = Runtime.getRuntime().exec(new String[]{"su", "-c", "id"});
-            // Close the panels
-            TileServiceUtil.closePanels(this);
             int exitCode = p.waitFor();
             return exitCode == 0;
         } catch (Exception e) {
