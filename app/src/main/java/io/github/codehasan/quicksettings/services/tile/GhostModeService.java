@@ -106,6 +106,11 @@ public class GhostModeService extends BaseStatefulTileService {
     public void onClick() {
         super.onClick();
 
+        Tile tile = getQsTile();
+        if (tile != null && tile.getState() == Tile.STATE_ACTIVE) {
+            return;
+        }
+
         if (!isRootAvailable()) {
             showRootUnavailableDialog();
             return;
