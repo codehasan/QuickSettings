@@ -37,6 +37,10 @@ Quick Settings brings essential system controls right to your notification shade
 - Quick access to power options
 - Restart, shutdown, and reboot controls
 
+### <img src="images/ic_bluetooth.svg" width="24" height="24" /> Bluetooth
+- Quick access to Bluetooth settings
+- Toggle Bluetooth connectivity
+
 ### <img src="images/ic_autostart.svg" width="24" height="24" /> Autostart Manager
 - Manage app autostart permission in Chinese roms
 
