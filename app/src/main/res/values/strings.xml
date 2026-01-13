@@ -6,6 +6,7 @@
     <string name="off">Off</string>
     <string name="error">Error</string>
     <string name="volume">Volume Controls</string>
+    <string name="ghost_mode">Ghost Mode</string>
     <string name="lock_screen">Lock Screen</string>
     <string name="autostart">Autostart Manager</string>
     <string name="screenshot">Screenshot</string>
@@ -19,4 +20,5 @@
     <string name="accessibility_service_desc">Accessibility service is required to:\n1. Lock the screen\n2. Take screenshots\n3. Open power menu\nAnd more!</string>
     <string name="autostart_error_message">Autostart settings not found! Please file an issue with your device model and operating system version.\n\nNOTE: This tile is only for Chinese roms.</string>
     <string name="permission_permanently_denied_msg">Please grant all permissions for Quick Settings app in Settings.</string>
+    <string name="ghost_mode_unsupported_msg">Ghost Mode can only be triggered on rooted devices. You can still see the state of ghost mode without root.</string>
 </resources>
