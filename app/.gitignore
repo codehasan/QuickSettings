@@ -1,6 +1,7 @@
 /build
 /release
 /output
+/beta
 /obfuscation
 *.properties
 *.jks
