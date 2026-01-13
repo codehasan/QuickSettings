@@ -11,9 +11,9 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.service.quicksettings.Tile;
 
-import io.github.codehasan.quicksettings.services.common.BaseActiveTileService;
+import io.github.codehasan.quicksettings.services.common.BaseStatefulTileService;
 
-public class VolumeService extends BaseActiveTileService {
+public class VolumeService extends BaseStatefulTileService {
     private AudioManager audioManager;
 
     // Receiver to handle volume changes while the tile is visible

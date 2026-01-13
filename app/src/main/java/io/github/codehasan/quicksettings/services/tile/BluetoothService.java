@@ -19,10 +19,10 @@ import androidx.annotation.RequiresPermission;
 
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.activity.PermissionActivity;
-import io.github.codehasan.quicksettings.services.common.BaseActiveTileService;
+import io.github.codehasan.quicksettings.services.common.BaseStatefulTileService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class BluetoothService extends BaseActiveTileService {
+public class BluetoothService extends BaseStatefulTileService {
     private BluetoothAdapter bluetoothAdapter;
 
     // Receiver to listen for system-wide Bluetooth changes

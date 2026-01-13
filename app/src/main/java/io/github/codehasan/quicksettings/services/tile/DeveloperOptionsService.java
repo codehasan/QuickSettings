@@ -16,10 +16,10 @@ import android.content.Intent;
 import android.provider.Settings;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.services.common.BaseInactiveTileService;
+import io.github.codehasan.quicksettings.services.common.BaseStatelessTileService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class DeveloperOptionsService extends BaseInactiveTileService {
+public class DeveloperOptionsService extends BaseStatelessTileService {
 
     @Override
     public void onClick() {

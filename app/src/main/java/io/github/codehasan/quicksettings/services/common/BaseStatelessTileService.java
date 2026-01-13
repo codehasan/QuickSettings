@@ -13,7 +13,7 @@ package io.github.codehasan.quicksettings.services.common;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
-public class BaseInactiveTileService extends TileService {
+public class BaseStatelessTileService extends TileService {
 
     @Override
     public void onTileAdded() {

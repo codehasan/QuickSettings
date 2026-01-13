@@ -18,10 +18,10 @@ import android.content.Intent;
 import android.net.Uri;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.services.common.BaseInactiveTileService;
+import io.github.codehasan.quicksettings.services.common.BaseStatelessTileService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class AutostartService extends BaseInactiveTileService {
+public class AutostartService extends BaseStatelessTileService {
 
     @Override
     public void onClick() {
