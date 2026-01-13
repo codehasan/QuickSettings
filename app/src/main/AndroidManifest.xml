@@ -23,6 +23,13 @@
             android:taskAffinity="" />
 
         <activity
+            android:name=".activity.PermissionActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:taskAffinity="" />
+
+        <activity
             android:name=".activity.DummyActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
