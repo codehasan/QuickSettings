@@ -10,9 +10,10 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Build;
 import android.service.quicksettings.Tile;
-import android.service.quicksettings.TileService;
 
-public class VolumeService extends TileService {
+import io.github.codehasan.quicksettings.services.common.BaseActiveTileService;
+
+public class VolumeService extends BaseActiveTileService {
     private AudioManager audioManager;
 
     // Receiver to handle volume changes while the tile is visible
@@ -32,11 +33,6 @@ public class VolumeService extends TileService {
     }
 
     @Override
-    public void onTileAdded() {
-        updateTile();
-    }
-
-    @Override
     public void onStartListening() {
         super.onStartListening();
         // Register receiver to listen for external volume changes (e.g. physical buttons)
@@ -53,7 +49,8 @@ public class VolumeService extends TileService {
         unregisterReceiver(volumeReceiver);
     }
 
-    private void updateTile() {
+    @Override
+    public void updateTile() {
         if (audioManager == null) return;
 
         Tile tile = getQsTile();

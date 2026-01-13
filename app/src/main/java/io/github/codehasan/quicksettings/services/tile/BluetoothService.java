@@ -16,14 +16,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
-import android.service.quicksettings.TileService;
 
 import androidx.annotation.RequiresPermission;
 
 import io.github.codehasan.quicksettings.R;
+import io.github.codehasan.quicksettings.services.common.BaseActiveTileService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class BluetoothService extends TileService {
+public class BluetoothService extends BaseActiveTileService {
     private BluetoothAdapter bluetoothAdapter;
 
     // Receiver to listen for system-wide Bluetooth changes
@@ -46,11 +46,6 @@ public class BluetoothService extends TileService {
         } else {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         }
-    }
-
-    @Override
-    public void onTileAdded() {
-        updateTile();
     }
 
     @Override
@@ -82,7 +77,8 @@ public class BluetoothService extends TileService {
         }
     }
 
-    private void updateTile() {
+    @Override
+    public void updateTile() {
         // Safety check: if permission is missing on Android 12+, show Unavailable
         if (!isNearbyDevicesGranted()) {
             Tile tile = getQsTile();
