@@ -3,15 +3,18 @@ package io.github.codehasan.quicksettings.services.tile;
 import static android.media.AudioManager.STREAM_MUSIC;
 import static java.lang.String.valueOf;
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.service.quicksettings.Tile;
 
 import io.github.codehasan.quicksettings.services.common.BaseStatefulTileService;
+import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
 public class VolumeService extends BaseStatefulTileService {
     private AudioManager audioManager;
@@ -74,6 +77,14 @@ public class VolumeService extends BaseStatefulTileService {
 
     @Override
     public void onClick() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                TileServiceUtil.startActivity(this, new Intent(Settings.Panel.ACTION_VOLUME));
+                return;
+            } catch (ActivityNotFoundException ignored) {
+            }
+        }
+
         if (audioManager != null) {
             audioManager.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
         }
