@@ -49,6 +49,11 @@ public class BluetoothService extends TileService {
     }
 
     @Override
+    public void onTileAdded() {
+        updateTile();
+    }
+
+    @Override
     public void onStartListening() {
         super.onStartListening();
         // Register receiver to get real-time updates

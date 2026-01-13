@@ -17,19 +17,19 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".common.ForegroundIntentStartupActivity"
+            android:name=".activity.ForegroundIntentStartupActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity="" />
 
         <activity
-            android:name=".common.DummyActivity"
+            android:name=".activity.DummyActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity="" />
 
         <activity
-            android:name=".common.TileSettingsActivity"
+            android:name=".activity.TileSettingsActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:noHistory="true"

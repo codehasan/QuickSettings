@@ -12,7 +12,7 @@ package io.github.codehasan.quicksettings.services.tile;
 
 import android.content.Intent;
 
-import io.github.codehasan.quicksettings.common.BaseAccessibilityTileService;
+import io.github.codehasan.quicksettings.services.common.BaseAccessibilityTileService;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
 
 public class LockScreenService extends BaseAccessibilityTileService {
