@@ -4,7 +4,6 @@
     <string name="cancel">Cancel</string>
     <string name="on">On</string>
     <string name="off">Off</string>
-    <string name="permission_required">Permission Required</string>
     <string name="error">Error</string>
     <string name="volume">Volume Controls</string>
     <string name="lock_screen">Lock Screen</string>

@@ -78,18 +78,6 @@ public class BluetoothService extends BaseStatefulTileService {
 
     @Override
     public void updateTile() {
-        // Safety check: if permission is missing on Android 12+, show Unavailable
-        if (!isNearbyDevicesGranted()) {
-            Tile tile = getQsTile();
-
-            if (tile != null) {
-                tile.setState(Tile.STATE_INACTIVE);
-                tile.setSubtitle(getString(R.string.permission_required));
-                tile.updateTile();
-            }
-            return;
-        }
-
         if (bluetoothAdapter == null) return;
 
         Tile tile = getQsTile();
