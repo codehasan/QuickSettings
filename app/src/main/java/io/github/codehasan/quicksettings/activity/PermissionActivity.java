@@ -39,26 +39,6 @@ public class PermissionActivity extends Activity {
             return;
         }
 
-        if (permanentlyDenied(permissions)) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.app_name)
-                    .setMessage(R.string.permission_permanently_denied_msg)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        dialog.dismiss();
-                        Intent settings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                .setData(Uri.parse("package:" + getPackageName()));
-                        startActivity(settings);
-                        finish();
-                    })
-                    .setNeutralButton(R.string.cancel, (dialog, which) -> {
-                        dialog.dismiss();
-                        finish();
-                    })
-                    .setCancelable(false)
-                    .show();
-            return;
-        }
-
         if (allGranted(permissions)) {
             finish();
             return;
@@ -70,19 +50,37 @@ public class PermissionActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        finish();
-    }
+        for (int i = 0, len = permissions.length; i < len; i++) {
+            String permission = permissions[i];
 
-    private boolean permanentlyDenied(String[] permissions) {
-        for (String p : permissions) {
-            if (checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED &&
-                    !shouldShowRequestPermissionRationale(p)) {
-                return true;
+            if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                boolean showRationale = shouldShowRequestPermissionRationale(permission);
+
+                if (!showRationale) {
+                    // User checked "Never ask again"
+                    // or clicked "Don't ask again"
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.app_name)
+                            .setMessage(R.string.permission_permanently_denied_msg)
+                            .setPositiveButton(R.string.ok, (dialog, which) -> {
+                                dialog.dismiss();
+                                Intent settings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                        .setData(Uri.parse("package:" + getPackageName()));
+                                startActivity(settings);
+                                finish();
+                            })
+                            .setNeutralButton(R.string.cancel, (dialog, which) -> {
+                                dialog.dismiss();
+                                finish();
+                            })
+                            .setCancelable(false)
+                            .show();
+                    return;
+                }
             }
         }
-        return false;
+        finish();
     }
-
 
     private boolean allGranted(String[] permissions) {
         for (String p : permissions) {
