@@ -1,10 +1,10 @@
 package io.github.codehasan.quicksettings.services.tile;
 
 import static android.Manifest.permission.BLUETOOTH_CONNECT;
+import static io.github.codehasan.quicksettings.activity.PermissionActivity.EXTRA_PERMISSIONS;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -12,14 +12,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
 import android.service.quicksettings.Tile;
 
 import androidx.annotation.RequiresPermission;
 
 import io.github.codehasan.quicksettings.R;
+import io.github.codehasan.quicksettings.activity.PermissionActivity;
 import io.github.codehasan.quicksettings.services.common.BaseActiveTileService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
@@ -73,7 +72,7 @@ public class BluetoothService extends BaseActiveTileService {
         if (isNearbyDevicesGranted()) {
             toggleBluetooth();
         } else {
-            showPermissionDialog();
+            requestNearbyDevicesPermission();
         }
     }
 
@@ -125,19 +124,10 @@ public class BluetoothService extends BaseActiveTileService {
                         PackageManager.PERMISSION_GRANTED;
     }
 
-    private void showPermissionDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.app_name)
-                .setMessage(R.string.bluetooth_disabled_msg)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    Intent settings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            .setData(Uri.parse("package:" + getPackageName()));
-                    TileServiceUtil.startActivity(this, settings);
-                    dialog.dismiss();
-                })
-                .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
-                .setCancelable(false)
-                .create();
-        showDialog(alertDialog);
+    private void requestNearbyDevicesPermission() {
+        String[] permissions = {Manifest.permission.BLUETOOTH_CONNECT};
+        Intent permissionIntent = new Intent(this, PermissionActivity.class)
+                .putExtra(EXTRA_PERMISSIONS, permissions);
+        TileServiceUtil.startActivity(this, permissionIntent);
     }
 }
