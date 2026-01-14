@@ -20,7 +20,7 @@ import android.provider.Settings;
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class BaseAccessibilityTileService extends BaseStatelessTileService {
+public abstract class AccessibilityTile extends StatelessTile {
 
     @Override
     public void onClick() {

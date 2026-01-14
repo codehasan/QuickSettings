@@ -25,10 +25,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.services.common.BaseStatelessTileService;
+import io.github.codehasan.quicksettings.services.common.StatelessTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class DeveloperOptionsService extends BaseStatelessTileService {
+public class DeveloperOptionsService extends StatelessTile {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
 

@@ -23,10 +23,10 @@ import android.os.Build;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 
-import io.github.codehasan.quicksettings.services.common.BaseStatefulTileService;
+import io.github.codehasan.quicksettings.services.common.StatefulTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class VolumeService extends BaseStatefulTileService {
+public class VolumeService extends StatefulTile {
     private AudioManager audioManager;
 
     // Receiver to handle volume changes while the tile is visible

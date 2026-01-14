@@ -41,10 +41,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.services.common.BaseStatefulTileService;
+import io.github.codehasan.quicksettings.services.common.StatefulTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class GhostModeService extends BaseStatefulTileService {
+public class GhostModeService extends StatefulTile {
     private BluetoothAdapter bluetoothAdapter;
     private LocationManager locationManager;
     private WifiManager wifiManager;

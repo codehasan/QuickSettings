@@ -12,7 +12,7 @@ package io.github.codehasan.quicksettings.services.common;
 
 import android.service.quicksettings.Tile;
 
-public class BaseStatelessTileService extends BaseTileService {
+public abstract class StatelessTile extends BaseTileService {
 
     @Override
     public void onTileAdded() {

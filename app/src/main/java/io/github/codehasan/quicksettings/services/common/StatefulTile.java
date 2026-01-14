@@ -10,7 +10,7 @@
 
 package io.github.codehasan.quicksettings.services.common;
 
-public abstract class BaseStatefulTileService extends BaseTileService {
+public abstract class StatefulTile extends BaseTileService {
 
     @Override
     public void onStartListening() {

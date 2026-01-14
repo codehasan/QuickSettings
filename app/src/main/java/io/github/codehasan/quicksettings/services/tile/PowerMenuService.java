@@ -12,10 +12,10 @@ package io.github.codehasan.quicksettings.services.tile;
 
 import android.content.Intent;
 
-import io.github.codehasan.quicksettings.services.common.BaseAccessibilityTileService;
+import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
 
-public class PowerMenuService extends BaseAccessibilityTileService {
+public class PowerMenuService extends AccessibilityTile {
 
     @Override
     public void onClick() {

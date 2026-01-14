@@ -16,11 +16,11 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
-import io.github.codehasan.quicksettings.services.common.BaseAccessibilityTileService;
+import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class ScreenshotService extends BaseAccessibilityTileService {
+public class ScreenshotService extends AccessibilityTile {
 
     @Override
     public void onClick() {
