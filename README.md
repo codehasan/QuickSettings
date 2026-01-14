@@ -21,11 +21,12 @@ Quick Settings brings essential system controls right to your notification shade
 
 ### <img src="images/ic_volume_high.svg" width="24" height="24" /> Volume Control
 
-- Quick access to volume controls
+- Quick access to sound settings
 - Support for multiple audio streams
 
 ### <img src="images/ic_developer_options.svg" width="24" height="24" /> Developer Options
 - Instant access to developer settings
+- Easily toggle developer options on/off
 
 ### <img src="images/ic_lock.svg" width="24" height="24" /> Lock Screen *(Android 9.0+)*
 - Put device to sleep
@@ -43,6 +44,9 @@ Quick Settings brings essential system controls right to your notification shade
 
 ### <img src="images/ic_autostart.svg" width="24" height="24" /> Autostart Manager
 - Manage app autostart permission in Chinese roms
+
+### <img src="images/ic_ghost_mode.svg" width="24" height="24" /> Ghost Mode *(Root Only)*
+- Disable all radio channels (WiFi, Bluetooth, Mobile Data, Location)
 
 ## 📱 Screenshots
 
