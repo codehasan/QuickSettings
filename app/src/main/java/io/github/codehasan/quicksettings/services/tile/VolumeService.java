@@ -51,8 +51,6 @@ public class VolumeService extends BaseStatefulTileService {
         // Register receiver to listen for external volume changes (e.g. physical buttons)
         IntentFilter filter = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
         registerReceiver(volumeReceiver, filter);
-
-        updateTile();
     }
 
     @Override

@@ -63,8 +63,6 @@ public class BluetoothService extends BaseStatefulTileService {
         // Register receiver to get real-time updates
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(bluetoothReceiver, filter);
-
-        updateTile();
     }
 
     @Override

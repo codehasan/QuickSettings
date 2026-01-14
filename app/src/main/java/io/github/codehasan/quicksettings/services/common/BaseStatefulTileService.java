@@ -13,6 +13,12 @@ package io.github.codehasan.quicksettings.services.common;
 public abstract class BaseStatefulTileService extends BaseTileService {
 
     @Override
+    public void onStartListening() {
+        super.onStartListening();
+        updateTile();
+    }
+
+    @Override
     public void onTileAdded() {
         super.onTileAdded();
         updateTile();

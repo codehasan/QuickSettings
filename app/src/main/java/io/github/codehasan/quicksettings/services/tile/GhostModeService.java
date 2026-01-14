@@ -103,8 +103,6 @@ public class GhostModeService extends BaseStatefulTileService {
         if (connectivityManager != null) {
             connectivityManager.registerDefaultNetworkCallback(networkCallback);
         }
-
-        updateTile();
     }
 
     @Override
