@@ -10,7 +10,7 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
-import static android.provider.Settings.Secure;
+import static android.provider.Settings.Secure.LOCATION_MODE;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
 import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
 
@@ -29,7 +29,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -216,11 +215,8 @@ public class GhostModeService extends BaseStatefulTileService {
         if (locationManager == null) return true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             return !locationManager.isLocationEnabled();
-        }
-        try {
-            return Secure.getInt(getContentResolver(), Secure.LOCATION_MODE) == Secure.LOCATION_MODE_OFF;
-        } catch (Settings.SettingNotFoundException e) {
-            return false;
+        } else {
+            return getSecureSetting(LOCATION_MODE, "0").equals("0");
         }
     }
 
