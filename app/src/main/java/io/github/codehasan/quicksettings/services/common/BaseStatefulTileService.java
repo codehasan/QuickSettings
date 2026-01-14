@@ -10,9 +10,7 @@
 
 package io.github.codehasan.quicksettings.services.common;
 
-import android.service.quicksettings.TileService;
-
-public abstract class BaseStatefulTileService extends TileService {
+public abstract class BaseStatefulTileService extends BaseTileService {
 
     @Override
     public void onTileAdded() {
