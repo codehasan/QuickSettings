@@ -10,22 +10,55 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
+import static android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED;
+import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
+import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
+
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.services.common.BaseStatelessTileService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
 public class DeveloperOptionsService extends BaseStatelessTileService {
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onClick() {
+        executor.execute(() -> {
+            boolean hasRoot = isRootAvailable();
+            boolean hasSecureSettings = hasSecureSettingsPermission();
+
+            if (hasRoot || hasSecureSettings) {
+                // AUTOMATION FLOW: We have power to toggle it
+                if (!isDeveloperOptionsEnabled()) {
+                    if (hasRoot) {
+                        runRootCommands("settings put global " + DEVELOPMENT_SETTINGS_ENABLED + " 1");
+                    } else {
+                        writeGlobalSetting(DEVELOPMENT_SETTINGS_ENABLED, "1");
+                    }
+                }
+                // Once handled, open the settings
+                handler.post(this::openDeveloperOptions);
+            } else {
+                // MANUAL FLOW: We have no powers, ask user to do it
+                handler.post(this::performNormalFlow);
+            }
+        });
+    }
+
+    private void performNormalFlow() {
         if (isDeveloperOptionsEnabled()) {
-            TileServiceUtil.startActivity(this,
-                    new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+            openDeveloperOptions();
         } else {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.developer_options)
@@ -39,6 +72,11 @@ public class DeveloperOptionsService extends BaseStatelessTileService {
                     .create();
             showDialog(alertDialog);
         }
+    }
+
+    private void openDeveloperOptions() {
+        TileServiceUtil.startActivity(this,
+                new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
     }
 
     private void openDeviceInfoSettings() {
@@ -57,7 +95,6 @@ public class DeveloperOptionsService extends BaseStatelessTileService {
     }
 
     private boolean isDeveloperOptionsEnabled() {
-        return Settings.Secure.getInt(getContentResolver(),
-                Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 0;
+        return !getGlobalSetting(DEVELOPMENT_SETTINGS_ENABLED, "0").equals("0");
     }
 }
