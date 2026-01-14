@@ -20,6 +20,8 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.util.Log;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -113,45 +115,45 @@ public class GhostModeService extends BaseStatefulTileService {
             return;
         }
 
-        File rootMarker = new File(
-                createDeviceProtectedStorageContext().getFilesDir(), "root_granted");
+        File rootMarker = new File(getFilesDir(), "root_granted");
         boolean previouslyGranted = rootMarker.exists();
 
-        // If marker is missing, this might be the first time.
-        // Collapse the panel so the user can see the Superuser popup.
+        // SCENARIO 1: FIRST RUN (Asking for Permission)
         if (!previouslyGranted) {
+            // 1. Collapse the panel immediately so user can see the popup
             TileServiceUtil.closePanels(this);
-        }
 
-        // Perform the blocking root check
-        // If we just collapsed the panel, this prompt will be visible.
-        if (!isRootAvailable()) {
-            // If check failed but file existed (permission revoked?), delete the file
-            if (previouslyGranted) {
-                rootMarker.delete();
-            }
-            showRootUnavailableDialog();
-            return;
-        }
+            // 2. Run the blocking check in the BACKGROUND
+            executor.execute(() -> {
+                if (isRootAvailable()) {
+                    // Success! Create marker and run commands
+                    try {
+                        rootMarker.createNewFile();
+                    } catch (IOException ignored) {
+                    }
 
-        // Root is available. If marker was missing, create it now.
-        if (!previouslyGranted) {
-            try {
-                rootMarker.createNewFile();
-            } catch (IOException e) {
-                Log.e("GhostModeService", "Failed to create root_granted file", e);
-            }
-        }
+                    // Proceed to disable radios
+                    performGhostModeOperations();
+                } else {
+                    // Failure!
+                    handler.post(this::showRootUnavailableDialog);
+                }
+            });
+        } else {
+            // SCENARIO 2: NORMAL RUN (Already have Permission)
+            // We still run in background to prevent UI freeze
+            executor.execute(() -> {
+                if (isRootAvailable()) {
+                    performGhostModeOperations();
+                } else {
+                    // Root lost? Delete marker.
+                    rootMarker.delete();
 
-        executor.execute(() -> {
-            runRootCommands(
-                    "svc wifi disable",
-                    "svc data disable",
-                    "svc bluetooth disable",
-                    "settings put secure location_mode 0"
-            );
-            handler.post(this::updateTile);
-        });
+                    // Failure!
+                    handler.post(this::showRootUnavailableDialog);
+                }
+            });
+        }
     }
 
     @Override
@@ -224,6 +226,16 @@ public class GhostModeService extends BaseStatefulTileService {
         }
     }
 
+    private void performGhostModeOperations() {
+        runRootCommands(
+                "svc wifi disable",
+                "svc data disable",
+                "svc bluetooth disable",
+                "settings put secure location_mode 0"
+        );
+        handler.post(this::updateTile);
+    }
+
     private void runRootCommands(String... commands) {
         Process su = null;
         DataOutputStream os = null;
@@ -255,6 +267,12 @@ public class GhostModeService extends BaseStatefulTileService {
                 .setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss())
                 .setCancelable(false)
                 .create();
-        showDialog(alertDialog);
+        try {
+            showDialog(alertDialog);
+        } catch (WindowManager.BadTokenException ignored) {
+            Toast.makeText(this,
+                    R.string.no_root_access,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }
