@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface TileConfig {
+    @StringRes int description();
+
     int minSdk() default 24;
 
     boolean requiresRoot() default false;
@@ -18,5 +20,5 @@ public @interface TileConfig {
 
     boolean requiresWriteSecureSettings() default false;
 
-    @StringRes int description();
+    String[] requiresPermissions() default {};
 }
