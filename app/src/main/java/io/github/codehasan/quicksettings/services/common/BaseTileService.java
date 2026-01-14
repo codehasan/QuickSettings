@@ -5,11 +5,7 @@ import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
 
-import io.github.codehasan.quicksettings.model.Constraints;
-
 public abstract class BaseTileService extends TileService {
-    public abstract Constraints getConstraints();
-
     public boolean hasSecureSettingsPermission() {
         return checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS)
                 == PackageManager.PERMISSION_GRANTED;
