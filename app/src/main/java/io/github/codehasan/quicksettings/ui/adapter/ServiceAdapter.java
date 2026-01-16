@@ -2,8 +2,6 @@ package io.github.codehasan.quicksettings.ui.adapter;
 
 import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,20 +56,18 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
 
         // Remove listener temporarily to avoid triggering it during recycling
         holder.switchService.setOnCheckedChangeListener(null);
-        holder.switchService.setChecked(item.isActive);
-
+        holder.switchService.setChecked(item.enabled);
+        holder.switchService.setEnabled(isNullOrEmpty(item.reason));
         holder.switchService.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Context context = holder.switchService.getContext();
-            PackageManager pm = context.getPackageManager();
+            PackageManager pm = buttonView.getContext().getPackageManager();
             int newState = isChecked ?
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
             pm.setComponentEnabledSetting(
-                    new ComponentName(context.getPackageName(), item.serviceClass),
+                    item.component,
                     newState,
-                    PackageManager.DONT_KILL_APP
-            );
-            item.isActive = isChecked;
+                    PackageManager.DONT_KILL_APP);
+            item.enabled = isChecked;
         });
     }
 

@@ -6,6 +6,7 @@ import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
@@ -135,12 +136,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private List<ServiceItem> getServices() {
+        PackageManager pm = getPackageManager();
         List<ServiceItem> serviceItems = new ArrayList<>();
         ServiceInfo[] services = null;
 
         try {
-            PackageInfo pi = getPackageManager().getPackageInfo(
-                    getPackageName(),
+            PackageInfo pi = pm.getPackageInfo(getPackageName(),
                     GET_SERVICES | MATCH_DISABLED_COMPONENTS);
             services = pi.services;
         } catch (PackageManager.NameNotFoundException ignored) {
@@ -151,11 +152,16 @@ public class MainActivity extends AppCompatActivity {
                 if (service.permission.equals("android.permission.BIND_QUICK_SETTINGS_TILE")) {
                     ServiceItem serviceItem = new ServiceItem();
 
-                    serviceItem.serviceClass = service.name;
+                    serviceItem.component = new ComponentName(service.packageName, service.name);
                     serviceItem.title = getString(service.labelRes);
                     serviceItem.description = getString(service.descriptionRes);
                     serviceItem.icon = service.icon;
-                    serviceItem.isActive = service.isEnabled();
+                    serviceItem.enabled = pm.getComponentEnabledSetting(serviceItem.component)
+                            == PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+
+                    if (!service.enabled) {
+                        serviceItem.reason = "Not supported";
+                    }
 
                     serviceItems.add(serviceItem);
                 }
