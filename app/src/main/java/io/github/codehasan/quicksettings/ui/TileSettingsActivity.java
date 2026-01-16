@@ -25,6 +25,7 @@ import java.util.Set;
 
 import io.github.codehasan.quicksettings.services.tile.BluetoothService;
 import io.github.codehasan.quicksettings.services.tile.LockScreenService;
+import io.github.codehasan.quicksettings.services.tile.PlayProtectService;
 import io.github.codehasan.quicksettings.services.tile.PowerMenuService;
 import io.github.codehasan.quicksettings.services.tile.ScreenshotService;
 import io.github.codehasan.quicksettings.services.tile.VolumeService;
@@ -47,6 +48,12 @@ public class TileSettingsActivity extends AppCompatActivity {
             startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
         } else if (launcher.equals(VolumeService.class.getName())) {
             startActivity(new Intent(Settings.ACTION_SOUND_SETTINGS));
+        } else if (launcher.equals(PlayProtectService.class.getName())) {
+            Intent playProtect = new Intent();
+            playProtect.setClassName(
+                    "com.google.android.gms",
+                    "com.google.android.gms.security.settings.VerifyAppsSettingsActivity");
+            startActivity(playProtect);
         } else if (accessibilityClasses.contains(launcher)) {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
         } else {
