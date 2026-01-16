@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="210" height="auto" src="images/logo.svg" alt="Quick Settings Logo" border="0">
+<img width="180" height="auto" src="images/logo.svg" alt="Quick Settings Logo" border="0">
 <br />
 
 # Quick Settings
@@ -41,6 +41,9 @@ Quick Settings brings essential system controls right to your notification shade
 ### <img src="images/ic_ghost_mode.svg" width="24" height="24" /> Ghost Mode *(Root Only)*
 - Disable all radio channels (WiFi, Bluetooth, Mobile Data, Location)
 
+### <img src="images/ic_play_protect.svg" width="24" height="24" /> Play Protect
+- Toggle Play Protect on/off
+
 ## 📱 Screenshots
 
 <div align="center">
@@ -57,11 +60,6 @@ Quick Settings brings essential system controls right to your notification shade
 - **Tile Services**: Each feature is implemented as a separate `TileService`
 - **Accessibility Service**: Global action handling for system-level operations
 - **Direct Boot Aware**: Works on encrypted devices
-
-### Permissions
-The app requires minimal permissions:
-- `BIND_QUICK_SETTINGS_TILE` - For registering quick settings tiles
-- `BIND_ACCESSIBILITY_SERVICE` - For global system actions (optional)
 
 ### Compatibility
 - **Minimum Android Version**: Android 7.0 (API 24)
