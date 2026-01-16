@@ -21,53 +21,52 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Transparent">
+        android:theme="@style/Theme.QuickSettings">
 
         <activity
-            android:name=".activity.ForegroundIntentStartupActivity"
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.ForegroundIntentStartupActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
-            android:taskAffinity="" />
+            android:taskAffinity=""
+            android:theme="@style/Theme.Transparent" />
 
         <activity
-            android:name=".activity.PermissionActivity"
+            android:name=".ui.PermissionActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
             android:noHistory="true"
-            android:taskAffinity="" />
+            android:taskAffinity=""
+            android:theme="@style/Theme.Transparent" />
 
         <activity
-            android:name=".activity.DummyActivity"
+            android:name=".ui.DummyActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
-            android:taskAffinity="" />
+            android:taskAffinity=""
+            android:theme="@style/Theme.Transparent" />
 
         <activity
-            android:name=".activity.TileSettingsActivity"
+            android:name=".ui.TileSettingsActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:noHistory="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
-            android:taskAffinity="">
+            android:taskAffinity=""
+            android:theme="@style/Theme.Transparent">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".services.tile.VolumeService"
-            android:exported="true"
-            android:icon="@drawable/ic_volume_high"
-            android:label="@string/volume"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <meta-data
-                android:name="android.service.quicksettings.TILE_CATEGORY"
-                android:value="android.service.quicksettings.CATEGORY_DISPLAY" />
-
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE" />
-            </intent-filter>
-        </service>
 
         <service
             android:name=".services.tile.BluetoothService"
@@ -106,17 +105,35 @@
         </service>
 
         <service
-            android:name=".services.tile.DeveloperOptionsService"
+            android:name=".services.tile.PlayProtectService"
             android:exported="true"
-            android:icon="@drawable/ic_developer_options"
-            android:label="@string/developer_options"
+            android:icon="@drawable/ic_play_protect"
+            android:label="@string/play_protect"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data
+                android:name="android.service.quicksettings.TOGGLEABLE_TILE"
+                android:value="true" />
+            <meta-data
+                android:name="android.service.quicksettings.TILE_CATEGORY"
+                android:value="android.service.quicksettings.CATEGORY_UTILITIES" />
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".services.tile.VolumeService"
+            android:exported="true"
+            android:icon="@drawable/ic_volume_high"
+            android:label="@string/volume_controls"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data
                 android:name="android.service.quicksettings.ACTIVE_TILE"
                 android:value="true" />
             <meta-data
                 android:name="android.service.quicksettings.TILE_CATEGORY"
-                android:value="android.service.quicksettings.CATEGORY_UTILITIES" />
+                android:value="android.service.quicksettings.CATEGORY_DISPLAY" />
 
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
@@ -173,24 +190,6 @@
             <meta-data
                 android:name="android.service.quicksettings.TILE_CATEGORY"
                 android:value="android.service.quicksettings.CATEGORY_ACCESSIBILITY" />
-
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".services.tile.AutostartService"
-            android:exported="true"
-            android:icon="@drawable/ic_autostart"
-            android:label="@string/autostart"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <meta-data
-                android:name="android.service.quicksettings.ACTIVE_TILE"
-                android:value="true" />
-            <meta-data
-                android:name="android.service.quicksettings.TILE_CATEGORY"
-                android:value="android.service.quicksettings.CATEGORY_UTILITIES" />
 
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

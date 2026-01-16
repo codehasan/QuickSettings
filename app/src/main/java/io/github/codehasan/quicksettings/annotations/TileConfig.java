@@ -18,7 +18,5 @@ public @interface TileConfig {
 
     boolean requiresAccessibility() default false;
 
-    boolean requiresWriteSecureSettings() default false;
-
     String[] requiresPermissions() default {};
 }
