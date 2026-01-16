@@ -1,5 +1,7 @@
 package io.github.codehasan.quicksettings.ui;
 
+import static android.content.pm.PackageManager.GET_SERVICES;
+import static android.content.pm.PackageManager.MATCH_DISABLED_COMPONENTS;
 import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
 
@@ -9,10 +11,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.text.Spanned;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.core.text.HtmlCompat;
 import androidx.core.view.ViewCompat;
@@ -20,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -31,9 +37,10 @@ import io.github.codehasan.quicksettings.ui.adapter.ServiceAdapter;
 import io.github.codehasan.quicksettings.ui.model.ServiceItem;
 
 public class MainActivity extends AppCompatActivity {
-
+    private MaterialToolbar toolbar;
     private MaterialButton btnRoot;
     private MaterialButton btnWriteSettings;
+    private ServiceAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,10 +59,20 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.services);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ServiceAdapter adapter = new ServiceAdapter(getServices());
+        adapter = new ServiceAdapter(getServices());
         recyclerView.setAdapter(adapter);
 
-        btnRoot.setOnClickListener(v -> isRootAvailable());
+        toolbar = findViewById(R.id.toolbar);
+        setupSearchBar();
+
+        btnRoot.setOnClickListener(v -> {
+            if (isRootAvailable()) {
+                onResume();
+            } else {
+                Toast.makeText(this, R.string.no_root_access, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         btnWriteSettings.setOnClickListener(v -> {
             if (hasSecureSettingsPermission()) {
                 onResume();
@@ -83,6 +100,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setupSearchBar() {
+        MenuItem menuItem = toolbar.getMenu().findItem(R.id.action_search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        if (searchView == null) return;
+
+        searchView.setQueryHint(getString(R.string.search) + "...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (adapter != null) {
+                    adapter.getFilter().filter(newText);
+                }
+                return true;
+            }
+        });
+    }
+
     private void showWriteSettingsGuide() {
         Spanned html = HtmlCompat.fromHtml(
                 getString(R.string.write_secure_settings_guide),
@@ -100,22 +139,25 @@ public class MainActivity extends AppCompatActivity {
         ServiceInfo[] services = null;
 
         try {
-            PackageInfo pi = getPackageManager()
-                    .getPackageInfo(getPackageName(), PackageManager.GET_SERVICES);
+            PackageInfo pi = getPackageManager().getPackageInfo(
+                    getPackageName(),
+                    GET_SERVICES | MATCH_DISABLED_COMPONENTS);
             services = pi.services;
         } catch (PackageManager.NameNotFoundException ignored) {
         }
 
         if (!isNullOrEmpty(services)) {
-            for (ServiceInfo serviceInfo : services) {
-                if (serviceInfo.permission.equals("android.permission.BIND_QUICK_SETTINGS_TILE")) {
-                    ServiceItem item = new ServiceItem();
-                    item.serviceClass = serviceInfo.name;
-                    item.title = getString(serviceInfo.labelRes);
-                    item.description = getString(serviceInfo.labelRes);
-                    item.icon = serviceInfo.icon;
-                    item.isActive = serviceInfo.isEnabled();
-                    serviceItems.add(item);
+            for (ServiceInfo service : services) {
+                if (service.permission.equals("android.permission.BIND_QUICK_SETTINGS_TILE")) {
+                    ServiceItem serviceItem = new ServiceItem();
+
+                    serviceItem.serviceClass = service.name;
+                    serviceItem.title = getString(service.labelRes);
+                    serviceItem.description = getString(service.descriptionRes);
+                    serviceItem.icon = service.icon;
+                    serviceItem.isActive = service.isEnabled();
+
+                    serviceItems.add(serviceItem);
                 }
             }
         }

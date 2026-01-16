@@ -28,7 +28,7 @@
     <string name="search">Search</string>
     <string name="allow">Allow</string>
     <string name="allowed">Allowed</string>
-    <string name="root">Root</string>
+    <string name="root">Root Access</string>
     <string name="write_settings">Write Settings</string>
     <string name="write_secure_settings_guide"><![CDATA[You must grant it manually using ADB.<br><br><b>ADB method:</b><br>1. Enable Developer options (tap Build number 7 times).<br>2. Enable USB debugging.<br>3. Connect your phone to a computer. The computer must have platform tools installed.<br><br>Run the following command:<br><tt>adb shell pm grant io.github.codehasan.quicksettings android.permission.WRITE_SECURE_SETTINGS</tt>]]></string>
 </resources>
