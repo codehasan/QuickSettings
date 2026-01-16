@@ -6,14 +6,14 @@
     <string name="off">Off</string>
     <string name="error">Error</string>
     <string name="play_protect">Play Protect</string>
-    <string name="play_protect_desc">Toggle play protect state</string>
+    <string name="play_protect_desc">Toggle play protect on/off</string>
     <string name="volume_controls">Volume Controls</string>
     <string name="volume_controls_desc">Easy access to sound configuration</string>
     <string name="ghost_mode">Ghost Mode</string>
     <string name="ghost_mode_desc">Disable all radio channels</string>
     <string name="ghost_mode_unsupported_msg">Ghost Mode can only be triggered on rooted devices. You can still see the state of ghost mode without root.</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="bluetooth_desc">Toggle bluetooth state</string>
+    <string name="bluetooth_desc">Toggle bluetooth on/off</string>
     <string name="lock_screen">Lock Screen</string>
     <string name="lock_screen_desc">Put device to sleep</string>
     <string name="screenshot">Screenshot</string>
