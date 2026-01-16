@@ -58,6 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:textColor="?colorOnSurfaceVariant"
             app:layout_constraintBottom_toBottomOf="@id/iv_icon"
             app:layout_constraintEnd_toStartOf="@id/switch_service"
             app:layout_constraintStart_toEndOf="@id/iv_icon"
