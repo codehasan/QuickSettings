@@ -1,7 +1,5 @@
 package io.github.codehasan.quicksettings.ui.model;
 
-import android.graphics.drawable.Drawable;
-
 public class ServiceItem {
     public String serviceClass;
     public String reason;
