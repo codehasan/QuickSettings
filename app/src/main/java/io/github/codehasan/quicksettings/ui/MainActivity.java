@@ -2,6 +2,7 @@ package io.github.codehasan.quicksettings.ui;
 
 import static android.content.pm.PackageManager.GET_SERVICES;
 import static android.content.pm.PackageManager.MATCH_DISABLED_COMPONENTS;
+import static io.github.codehasan.quicksettings.constants.Repository.GITHUB_REPO;
 import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootGranted;
@@ -9,9 +10,11 @@ import static io.github.codehasan.quicksettings.util.RootUtil.setRootGranted;
 
 import android.Manifest;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         toolbar = findViewById(R.id.toolbar);
-        setupSearchBar();
+        setupToolbarActions();
 
         btnRoot.setOnClickListener(v -> {
             executor.execute(() -> {
@@ -121,9 +124,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupSearchBar() {
-        MenuItem menuItem = toolbar.getMenu().findItem(R.id.action_search);
-        SearchView searchView = (SearchView) menuItem.getActionView();
+    private void setupToolbarActions() {
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.github) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_REPO)));
+            }
+            return true;
+        });
+
+        MenuItem searchItem = toolbar.getMenu().findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
         if (searchView == null) return;
 
         searchView.setQueryHint(getString(R.string.search) + "...");
