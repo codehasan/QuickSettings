@@ -82,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
                     setRootGranted(this, true);
                     handler.post(() -> setPermissionGrantStatus(btnRoot, true));
                 } else {
+                    setRootGranted(this, false);
                     handler.post(() -> {
+                        setPermissionGrantStatus(btnRoot, false);
                         Toast.makeText(
                                 this,
                                 R.string.no_root_access,
