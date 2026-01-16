@@ -28,13 +28,11 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.util.Log;
 import android.view.WindowManager;
@@ -147,11 +145,6 @@ public class GhostModeService extends StatefulTile {
             return;
         }
 
-        if (!Settings.System.canWrite(this)) {
-            showWriteSettingsUnavailableDialog();
-            return;
-        }
-
         if (!isRootGranted(this)) {
             TileServiceUtil.closePanels(this);
             executor.execute(() -> {
@@ -257,6 +250,8 @@ public class GhostModeService extends StatefulTile {
 
     private void performGhostModeOperations() {
         runRootCommands(
+                // Grant WRITE_SETTINGS to disable tethering hotspot
+                "appops set io.github.codehasan.quicksettings WRITE_SETTINGS allow",
                 // WiFi
                 "svc wifi disable",
                 "cmd wifi set-wifi-enabled disabled",
@@ -300,22 +295,6 @@ public class GhostModeService extends StatefulTile {
         } catch (Exception e) {
             Log.e("GhostMode", "Failed to disable wifi_ap", e);
         }
-    }
-
-    private void showWriteSettingsUnavailableDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.app_name)
-                .setMessage(R.string.write_settings_permission_denied_msg)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    dialog.dismiss();
-                    Intent manageWriteSettings = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-                            .setData(Uri.parse("package:" + getPackageName()));
-                    TileServiceUtil.startActivity(this, manageWriteSettings);
-                })
-                .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
-                .setCancelable(false)
-                .create();
-        showDialog(alertDialog);
     }
 
     private void showRootUnavailableDialog() {
