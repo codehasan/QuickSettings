@@ -70,6 +70,7 @@
 
         <service
             android:name=".services.tile.BluetoothService"
+            android:description="@string/bluetooth_desc"
             android:exported="true"
             android:icon="@drawable/ic_bluetooth"
             android:label="@string/bluetooth"
@@ -88,6 +89,7 @@
 
         <service
             android:name=".services.tile.GhostModeService"
+            android:description="@string/ghost_mode_desc"
             android:exported="true"
             android:icon="@drawable/ic_ghost_mode"
             android:label="@string/ghost_mode"
@@ -106,6 +108,7 @@
 
         <service
             android:name=".services.tile.PlayProtectService"
+            android:description="@string/play_protect_desc"
             android:exported="true"
             android:icon="@drawable/ic_play_protect"
             android:label="@string/play_protect"
@@ -124,6 +127,7 @@
 
         <service
             android:name=".services.tile.VolumeService"
+            android:description="@string/volume_controls_desc"
             android:exported="true"
             android:icon="@drawable/ic_volume_high"
             android:label="@string/volume_controls"
@@ -142,6 +146,7 @@
 
         <service
             android:name=".services.tile.LockScreenService"
+            android:description="@string/lock_screen_desc"
             android:enabled="@bool/is_android_api_28"
             android:exported="true"
             android:icon="@drawable/ic_lock"
@@ -161,6 +166,7 @@
 
         <service
             android:name=".services.tile.ScreenshotService"
+            android:description="@string/screenshot_desc"
             android:enabled="@bool/is_android_api_28"
             android:exported="true"
             android:icon="@drawable/ic_screenshot"
@@ -180,6 +186,7 @@
 
         <service
             android:name=".services.tile.PowerMenuService"
+            android:description="@string/power_menu_desc"
             android:exported="true"
             android:icon="@drawable/ic_power_menu"
             android:label="@string/power_menu"
