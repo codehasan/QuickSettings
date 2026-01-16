@@ -11,10 +11,13 @@
 package io.github.codehasan.quicksettings.services.tile;
 
 import android.content.Intent;
+import android.os.Build;
 
-import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
+import io.github.codehasan.quicksettings.annotations.MinSdk;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
+import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
 
+@MinSdk(Build.VERSION_CODES.P)
 public class LockScreenService extends AccessibilityTile {
 
     @Override

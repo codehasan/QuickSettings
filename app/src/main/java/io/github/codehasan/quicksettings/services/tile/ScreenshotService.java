@@ -13,13 +13,16 @@ package io.github.codehasan.quicksettings.services.tile;
 import static io.github.codehasan.quicksettings.util.AccessibilityServiceUtil.isAccessibilityServiceEnabled;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
-import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
+import io.github.codehasan.quicksettings.annotations.MinSdk;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
+import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
+@MinSdk(Build.VERSION_CODES.P)
 public class ScreenshotService extends AccessibilityTile {
 
     @Override

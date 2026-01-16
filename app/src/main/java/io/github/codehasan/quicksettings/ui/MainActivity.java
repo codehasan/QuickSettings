@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.codehasan.quicksettings.R;
+import io.github.codehasan.quicksettings.annotations.MinSdk;
 import io.github.codehasan.quicksettings.ui.adapter.ServiceAdapter;
 import io.github.codehasan.quicksettings.ui.model.ServiceItem;
 
@@ -147,25 +148,37 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException ignored) {
         }
 
-        if (!isNullOrEmpty(services)) {
-            for (ServiceInfo service : services) {
-                if (service.permission.equals("android.permission.BIND_QUICK_SETTINGS_TILE")) {
-                    ServiceItem serviceItem = new ServiceItem();
+        if (isNullOrEmpty(services)) return serviceItems;
 
-                    serviceItem.component = new ComponentName(service.packageName, service.name);
-                    serviceItem.title = getString(service.labelRes);
-                    serviceItem.description = getString(service.descriptionRes);
-                    serviceItem.icon = service.icon;
-                    serviceItem.enabled = pm.getComponentEnabledSetting(serviceItem.component)
-                            == PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+        for (ServiceInfo service : services) {
+            if (!service.permission.equals("android.permission.BIND_QUICK_SETTINGS_TILE"))
+                continue;
 
-                    if (!service.enabled) {
-                        serviceItem.reason = "Not supported";
+            ServiceItem serviceItem = new ServiceItem();
+
+            serviceItem.component = new ComponentName(service.packageName, service.name);
+            serviceItem.title = getString(service.labelRes);
+            serviceItem.description = getString(service.descriptionRes);
+            serviceItem.icon = service.icon;
+
+            int state = pm.getComponentEnabledSetting(serviceItem.component);
+            boolean isExplicitlyEnabled = state == PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+            boolean isDefaultAndManifestEnabled = (state == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) && service.enabled;
+            serviceItem.enabled = isExplicitlyEnabled || isDefaultAndManifestEnabled;
+
+            if (!service.enabled) {
+                serviceItem.reason = getString(R.string.not_supported);
+                try {
+                    Class<?> serviceClass = Class.forName(service.name);
+                    if (serviceClass.isAnnotationPresent(MinSdk.class)) {
+                        MinSdk annotation = serviceClass.getAnnotation(MinSdk.class);
+                        serviceItem.reason = getString(R.string.not_supported_below_api, annotation.value());
                     }
-
-                    serviceItems.add(serviceItem);
+                } catch (Exception ignored) {
                 }
             }
+
+            serviceItems.add(serviceItem);
         }
         return serviceItems;
     }
