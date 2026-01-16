@@ -8,18 +8,19 @@
     <string name="volume">Volume Controls</string>
     <string name="ghost_mode">Ghost Mode</string>
     <string name="lock_screen">Lock Screen</string>
-    <string name="autostart">Autostart Manager</string>
     <string name="screenshot">Screenshot</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="power_menu">Power Menu</string>
-    <string name="developer_options">Developer Options</string>
-    <string name="dev_options_disabled_msg">Developer option is disabled. Please enable it in device info settings.</string>
-    <string name="dev_options_error_message">Developer option is not enabled and failed to open device info settings!</string>
     <string name="accessibility_service_error_message">Quick Settings is not enabled as an accessibility service and failed to open settings!</string>
     <string name="accessibility_service_disabled_msg">Quick Settings is not enabled as an accessibility service. Please enable it in settings.</string>
     <string name="accessibility_service_desc">Accessibility service is required to:\n1. Lock the screen\n2. Take screenshots\n3. Open power menu\nAnd more!</string>
-    <string name="autostart_error_message">Autostart settings not found! Please file an issue with your device model and operating system version.\n\nNOTE: This tile is only for Chinese roms.</string>
     <string name="permission_permanently_denied_msg">Please grant all permissions for Quick Settings app in Settings.</string>
     <string name="ghost_mode_unsupported_msg">Ghost Mode can only be triggered on rooted devices. You can still see the state of ghost mode without root.</string>
     <string name="no_root_access">No root access</string>
+    <string name="search">Search</string>
+    <string name="allow">Allow</string>
+    <string name="allowed">Allowed</string>
+    <string name="root">Root</string>
+    <string name="write_settings">Write Settings</string>
+    <string name="write_secure_settings_guide"><![CDATA[You must grant it manually using ADB.<br><br><b>ADB method:</b><br>1. Enable Developer options (tap Build number 7 times).<br>2. Enable USB debugging.<br>3. Connect your phone to a computer. The computer must have platform tools installed.<br><br>Run the following command:<br><tt>adb shell pm grant io.github.codehasan.quicksettings android.permission.WRITE_SECURE_SETTINGS</tt>]]></string>
 </resources>

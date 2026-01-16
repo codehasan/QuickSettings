@@ -28,7 +28,7 @@ import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.services.common.StatelessTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class DeveloperOptionsService extends StatelessTile {
+public class PlayProtectService extends StatelessTile {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
 
