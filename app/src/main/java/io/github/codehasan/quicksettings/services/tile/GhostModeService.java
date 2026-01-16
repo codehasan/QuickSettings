@@ -37,6 +37,7 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -216,7 +217,7 @@ public class GhostModeService extends StatefulTile {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             return !locationManager.isLocationEnabled();
         } else {
-            return getSecureSetting(LOCATION_MODE, "0").equals("0");
+            return Objects.equals(getSecureSetting(LOCATION_MODE), "0");
         }
     }
 
