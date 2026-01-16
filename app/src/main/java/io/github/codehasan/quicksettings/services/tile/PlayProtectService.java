@@ -10,25 +10,27 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
-import static android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
 import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
 
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
+import android.service.quicksettings.Tile;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.services.common.StatelessTile;
+import io.github.codehasan.quicksettings.services.common.StatefulTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-public class PlayProtectService extends StatelessTile {
+public class PlayProtectService extends StatefulTile {
+    private static final String PLAY_PROTECT_KEY = "package_verifier_user_consent";
+    private static final String PLAY_PROTECT_OFF_VALUE = "-1";
+    private static final String PLAY_PROTECT_ON_VALUE = "1";
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -39,62 +41,46 @@ public class PlayProtectService extends StatelessTile {
             boolean hasSecureSettings = hasSecureSettingsPermission();
 
             if (hasRoot || hasSecureSettings) {
+                String newState = isPlayProtectEnabled()
+                        ? PLAY_PROTECT_OFF_VALUE : PLAY_PROTECT_ON_VALUE;
+
                 // AUTOMATION FLOW: We have power to toggle it
-                if (!isDeveloperOptionsEnabled()) {
-                    if (hasRoot) {
-                        runRootCommands("settings put global " + DEVELOPMENT_SETTINGS_ENABLED + " 1");
-                    } else {
-                        writeGlobalSetting(DEVELOPMENT_SETTINGS_ENABLED, "1");
-                    }
+                if (hasRoot) {
+                    runRootCommands("settings put global " + PLAY_PROTECT_KEY + " " + newState);
+                } else {
+                    writeGlobalSetting(PLAY_PROTECT_KEY, newState);
                 }
-                // Once handled, open the settings
-                handler.post(this::openDeveloperOptions);
+                handler.post(this::updateTile);
             } else {
                 // MANUAL FLOW: We have no powers, ask user to do it
-                handler.post(this::performNormalFlow);
+                handler.post(this::openPlayProtectSettings);
             }
         });
     }
 
-    private void performNormalFlow() {
-        if (isDeveloperOptionsEnabled()) {
-            openDeveloperOptions();
-        } else {
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.developer_options)
-                    .setMessage(R.string.dev_options_disabled_msg)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        dialog.dismiss();
-                        openDeviceInfoSettings();
-                    })
-                    .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
-                    .setCancelable(false)
-                    .create();
-            showDialog(alertDialog);
+    @Override
+    public void updateTile() {
+        Tile tile = getQsTile();
+        if (tile == null) return;
+
+        boolean isEnabled = isPlayProtectEnabled();
+
+        tile.setState(isEnabled ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            tile.setSubtitle(getString(isEnabled ? R.string.on : R.string.off));
         }
+        tile.updateTile();
     }
 
-    private void openDeveloperOptions() {
-        TileServiceUtil.startActivity(this,
-                new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+    private void openPlayProtectSettings() {
+        Intent playProtect = new Intent();
+        playProtect.setClassName(
+                "com.google.android.gms",
+                "com.google.android.gms.security.settings.VerifyAppsSettingsActivity");
+        TileServiceUtil.startActivity(this, playProtect);
     }
 
-    private void openDeviceInfoSettings() {
-        try {
-            TileServiceUtil.startActivity(this,
-                    new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS));
-        } catch (ActivityNotFoundException ignored) {
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.error)
-                    .setMessage(R.string.dev_options_error_message)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss())
-                    .setCancelable(false)
-                    .create();
-            showDialog(alertDialog);
-        }
-    }
-
-    private boolean isDeveloperOptionsEnabled() {
-        return !getGlobalSetting(DEVELOPMENT_SETTINGS_ENABLED, "0").equals("0");
+    public boolean isPlayProtectEnabled() {
+        return !Objects.equals(getGlobalSetting(PLAY_PROTECT_KEY), PLAY_PROTECT_OFF_VALUE);
     }
 }
