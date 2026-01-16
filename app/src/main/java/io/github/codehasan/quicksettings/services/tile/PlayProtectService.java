@@ -10,6 +10,7 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
+import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
 import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
 
@@ -19,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.service.quicksettings.Tile;
 
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -81,6 +81,7 @@ public class PlayProtectService extends StatefulTile {
     }
 
     public boolean isPlayProtectEnabled() {
-        return !Objects.equals(getGlobalSetting(PLAY_PROTECT_KEY), PLAY_PROTECT_OFF_VALUE);
+        String state = getGlobalSetting(PLAY_PROTECT_KEY);
+        return !isNullOrEmpty(state) && state.equals(PLAY_PROTECT_ON_VALUE);
     }
 }
