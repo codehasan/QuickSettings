@@ -256,10 +256,6 @@ public class GhostModeService extends StatefulTile {
     }
 
     private void performGhostModeOperations() {
-        disableHotspotLegacy();
-        if (bluetoothAdapter != null) {
-            bluetoothAdapter.disable();
-        }
         runRootCommands(
                 // WiFi
                 "svc wifi disable",
@@ -276,6 +272,10 @@ public class GhostModeService extends StatefulTile {
                 // Tethering Hotspot
                 "cmd wifi stop-softap"
         );
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.disable();
+        }
+        disableHotspotLegacy();
         handler.post(this::updateTile);
     }
 
