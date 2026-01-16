@@ -11,7 +11,7 @@
 package io.github.codehasan.quicksettings.services.tile;
 
 import static android.Manifest.permission.BLUETOOTH_CONNECT;
-import static io.github.codehasan.quicksettings.activity.PermissionActivity.EXTRA_PERMISSIONS;
+import static io.github.codehasan.quicksettings.ui.PermissionActivity.EXTRA_PERMISSIONS;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -28,10 +28,12 @@ import android.service.quicksettings.Tile;
 import androidx.annotation.RequiresPermission;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.activity.PermissionActivity;
+import io.github.codehasan.quicksettings.ui.PermissionActivity;
+import io.github.codehasan.quicksettings.annotations.TileConfig;
 import io.github.codehasan.quicksettings.services.common.StatefulTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
+@TileConfig(description = 0, requiresPermissions = {BLUETOOTH_CONNECT})
 public class BluetoothService extends StatefulTile {
     private BluetoothAdapter bluetoothAdapter;
 

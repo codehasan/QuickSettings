@@ -16,7 +16,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.service.quicksettings.TileService;
 
-import io.github.codehasan.quicksettings.activity.DummyActivity;
+import io.github.codehasan.quicksettings.ui.DummyActivity;
 
 public class TileServiceUtil {
 

@@ -8,18 +8,38 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.codehasan.quicksettings.activity;
+package io.github.codehasan.quicksettings.ui;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class DummyActivity extends Activity {
+import java.util.Set;
+
+public class ForegroundIntentStartupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startActivity(newIntent(getIntent()));
         finish();
+    }
+
+    @NonNull
+    private Intent newIntent(@NonNull Intent from) {
+        Intent target = new Intent(from.getAction(), from.getData());
+        target.putExtras(from);
+
+        Set<String> categories = from.getCategories();
+        if (categories != null) {
+            for (String category : categories) {
+                target.addCategory(category);
+            }
+        }
+
+        return target;
     }
 }
