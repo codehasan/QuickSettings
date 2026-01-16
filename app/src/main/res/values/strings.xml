@@ -24,6 +24,7 @@
     <string name="accessibility_service_disabled_msg">Quick Settings is not enabled as an accessibility service. Please enable it in settings.</string>
     <string name="accessibility_service_desc">This permission is required to:\n\n1. Put the phone into sleep mode.\n2. Take screenshots.\n3. Open the menu that shows up when long clicking power button.</string>
     <string name="permission_permanently_denied_msg">Please grant all permissions for Quick Settings app in Settings.</string>
+    <string name="write_settings_permission_denied_msg">Please grant "Modify system settings" permission for Quick Settings app in Settings.</string>
     <string name="no_root_access">No root access</string>
     <string name="search">Search</string>
     <string name="allow">Allow</string>
