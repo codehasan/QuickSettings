@@ -4,6 +4,8 @@ import static android.content.pm.PackageManager.GET_SERVICES;
 import static android.content.pm.PackageManager.MATCH_DISABLED_COMPONENTS;
 import static io.github.codehasan.quicksettings.util.NullSafety.isNullOrEmpty;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
+import static io.github.codehasan.quicksettings.util.RootUtil.isRootGranted;
+import static io.github.codehasan.quicksettings.util.RootUtil.setRootGranted;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -11,6 +13,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Spanned;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -32,6 +36,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.annotations.MinSdk;
@@ -39,6 +45,9 @@ import io.github.codehasan.quicksettings.ui.adapter.ServiceAdapter;
 import io.github.codehasan.quicksettings.ui.model.ServiceItem;
 
 public class MainActivity extends AppCompatActivity {
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
     private MaterialToolbar toolbar;
     private MaterialButton btnRoot;
     private MaterialButton btnWriteSettings;
@@ -68,11 +77,19 @@ public class MainActivity extends AppCompatActivity {
         setupSearchBar();
 
         btnRoot.setOnClickListener(v -> {
-            if (isRootAvailable()) {
-                onResume();
-            } else {
-                Toast.makeText(this, R.string.no_root_access, Toast.LENGTH_SHORT).show();
-            }
+            executor.execute(() -> {
+                if (isRootAvailable()) {
+                    setRootGranted(this, true);
+                    handler.post(() -> setPermissionGrantStatus(btnRoot, true));
+                } else {
+                    handler.post(() -> {
+                        Toast.makeText(
+                                this,
+                                R.string.no_root_access,
+                                Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
         });
 
         btnWriteSettings.setOnClickListener(v -> {
@@ -88,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        setPermissionGrantStatus(btnRoot, isRootAvailable());
+        setPermissionGrantStatus(btnRoot, isRootGranted(this));
         setPermissionGrantStatus(btnWriteSettings, hasSecureSettingsPermission());
     }
 

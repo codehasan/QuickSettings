@@ -10,15 +10,31 @@
 
 package io.github.codehasan.quicksettings.util;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 public class RootUtil {
     public static final String TAG = "RootUtil";
+
+    public static boolean isRootGranted(Context context) {
+        return new File(context.getFilesDir(), "root_granted").exists();
+    }
+
+    public static boolean setRootGranted(Context context, boolean granted) {
+        File file = new File(context.getFilesDir(), "root_granted");
+
+        if (granted) {
+            return file.mkdir();
+        } else {
+            return file.delete();
+        }
+    }
 
     public static boolean isRootAvailable() {
         try {
