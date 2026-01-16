@@ -25,15 +25,14 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.service.quicksettings.Tile;
 
+import androidx.annotation.RequiresApi;
 import androidx.annotation.RequiresPermission;
 
 import io.github.codehasan.quicksettings.R;
-import io.github.codehasan.quicksettings.ui.PermissionActivity;
-import io.github.codehasan.quicksettings.annotations.TileConfig;
 import io.github.codehasan.quicksettings.services.common.StatefulTile;
+import io.github.codehasan.quicksettings.ui.PermissionActivity;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-@TileConfig(description = 0, requiresPermissions = {BLUETOOTH_CONNECT})
 public class BluetoothService extends StatefulTile {
     private BluetoothAdapter bluetoothAdapter;
 
@@ -122,6 +121,7 @@ public class BluetoothService extends StatefulTile {
                         PackageManager.PERMISSION_GRANTED;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.S)
     private void requestNearbyDevicesPermission() {
         String[] permissions = {Manifest.permission.BLUETOOTH_CONNECT};
         Intent permissionIntent = new Intent(this, PermissionActivity.class)
