@@ -87,10 +87,14 @@ public class BluetoothService extends StatefulTile {
 
     @Override
     public void updateTile() {
-        if (bluetoothAdapter == null) return;
-
         Tile tile = getQsTile();
         if (tile == null) return;
+
+        if (bluetoothAdapter == null) {
+            tile.setState(Tile.STATE_UNAVAILABLE);
+            tile.updateTile();
+            return;
+        }
 
         boolean isEnabled = bluetoothAdapter.isEnabled();
 
