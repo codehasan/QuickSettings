@@ -12,7 +12,9 @@ package io.github.codehasan.quicksettings.services.tile;
 
 import static android.provider.Settings.Secure.LOCATION_MODE;
 import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
+import static io.github.codehasan.quicksettings.util.RootUtil.isRootGranted;
 import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
+import static io.github.codehasan.quicksettings.util.RootUtil.setRootGranted;
 
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -25,6 +27,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
@@ -35,8 +38,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,14 +50,18 @@ import io.github.codehasan.quicksettings.services.common.StatefulTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
 public class GhostModeService extends StatefulTile {
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
     private BluetoothAdapter bluetoothAdapter;
     private LocationManager locationManager;
     private WifiManager wifiManager;
     private ConnectivityManager connectivityManager;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
-    // Receiver for Bluetooth and Location (System Broadcasts)
+    private static final int WIFI_AP_STATE_DISABLED = 11;
+    private static final int WIFI_AP_STATE_DISABLING = 10;
+
+    // Receiver for Bluetooth, Location, and Hotspot (System Broadcasts)
     private final BroadcastReceiver stateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -66,13 +74,11 @@ public class GhostModeService extends StatefulTile {
             new ConnectivityManager.NetworkCallback() {
                 @Override
                 public void onLost(@NonNull Network network) {
-                    // Network lost (turned off), update UI on main thread
                     handler.post(GhostModeService.this::updateTile);
                 }
 
                 @Override
                 public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities caps) {
-                    // Network state changed, update UI
                     handler.post(GhostModeService.this::updateTile);
                 }
             };
@@ -92,14 +98,13 @@ public class GhostModeService extends StatefulTile {
     public void onStartListening() {
         super.onStartListening();
 
-        // Register BroadcastReceiver for Bluetooth & Location
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter.addAction(LocationManager.MODE_CHANGED_ACTION);
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED");
         registerReceiver(stateReceiver, filter);
 
-        // Register NetworkCallback for Cellular/WiFi connectivity changes
         if (connectivityManager != null) {
             connectivityManager.registerDefaultNetworkCallback(networkCallback);
         }
@@ -123,41 +128,22 @@ public class GhostModeService extends StatefulTile {
             return;
         }
 
-        File rootMarker = new File(getFilesDir(), "root_granted");
-        boolean previouslyGranted = rootMarker.exists();
-
-        // SCENARIO 1: FIRST RUN (Asking for Permission)
-        if (!previouslyGranted) {
-            // 1. Collapse the panel immediately so user can see the popup
+        if (!isRootGranted(this)) {
             TileServiceUtil.closePanels(this);
-
-            // 2. Run the blocking check in the BACKGROUND
             executor.execute(() -> {
                 if (isRootAvailable()) {
-                    // Success! Create marker and run commands
-                    try {
-                        rootMarker.createNewFile();
-                    } catch (IOException ignored) {
-                    }
-
-                    // Proceed to disable radios
+                    setRootGranted(this, true);
                     performGhostModeOperations();
                 } else {
-                    // Failure!
                     handler.post(this::showRootUnavailableDialog);
                 }
             });
         } else {
-            // SCENARIO 2: NORMAL RUN (Already have Permission)
-            // We still run in background to prevent UI freeze
             executor.execute(() -> {
                 if (isRootAvailable()) {
                     performGhostModeOperations();
                 } else {
-                    // Root lost? Delete marker.
-                    rootMarker.delete();
-
-                    // Failure!
+                    setRootGranted(this, false);
                     handler.post(this::showRootUnavailableDialog);
                 }
             });
@@ -172,11 +158,11 @@ public class GhostModeService extends StatefulTile {
         boolean everythingOff = isBluetoothOff() &&
                 isWiFiOff() &&
                 isCellularDataOff() &&
-                isLocationOff();
+                isLocationOff() &&
+                isHotspotOff();
 
         int newState = everythingOff ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
 
-        // Only update if state actually changed to reduce flicker
         if (tile.getState() != newState) {
             tile.setState(newState);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -202,13 +188,10 @@ public class GhostModeService extends StatefulTile {
 
     private boolean isCellularDataOff() {
         if (connectivityManager == null) return true;
-
         Network activeNetwork = connectivityManager.getActiveNetwork();
-        if (activeNetwork == null) return true; // No network connected = Data effectively off
-
+        if (activeNetwork == null) return true;
         NetworkCapabilities caps = connectivityManager.getNetworkCapabilities(activeNetwork);
         if (caps == null) return true;
-
         return !caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR);
     }
 
@@ -221,14 +204,67 @@ public class GhostModeService extends StatefulTile {
         }
     }
 
+    private boolean isHotspotOff() {
+        if (wifiManager == null) return true;
+        try {
+            Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");
+            method.setAccessible(true);
+            int apState = (int) method.invoke(wifiManager);
+
+            return apState == WIFI_AP_STATE_DISABLED ||
+                    apState == WIFI_AP_STATE_DISABLING;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
     private void performGhostModeOperations() {
-        runRootCommands(
-                "svc wifi disable",
-                "svc data disable",
-                "svc bluetooth disable",
-                "settings put secure location_mode 0"
-        );
+        List<String> commands = new ArrayList<>();
+
+        commands.add("svc wifi disable");
+        commands.add("svc data disable");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            commands.add("svc bluetooth disable");
+        } else {
+            bluetoothAdapter.disable();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            commands.add("cmd connectivity stop-tethering");
+        } else {
+            disableHotspotLegacy();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            commands.add("cmd location set-location-enabled false");
+        } else {
+            commands.add("settings put secure location_mode 0");
+        }
+
+        runRootCommands(commands.toArray(new String[0]));
         handler.post(this::updateTile);
+    }
+
+    private void disableHotspotLegacy() {
+        if (connectivityManager == null || wifiManager == null) return;
+
+        // Android API 26 and above
+        try {
+            Method stopTethering = connectivityManager.getClass()
+                    .getDeclaredMethod("stopTethering", int.class);
+            stopTethering.setAccessible(true);
+            stopTethering.invoke(connectivityManager, 0);
+        } catch (Exception ignored) {
+        }
+
+        try {
+            Method setWifiApEnabled = wifiManager.getClass()
+                    .getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+            setWifiApEnabled.setAccessible(true);
+            setWifiApEnabled.invoke(wifiManager, null, false);
+        } catch (Exception ignored) {
+        }
     }
 
     private void showRootUnavailableDialog() {
