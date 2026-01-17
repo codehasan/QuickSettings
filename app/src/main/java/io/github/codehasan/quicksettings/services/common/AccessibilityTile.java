@@ -10,33 +10,80 @@
 
 package io.github.codehasan.quicksettings.services.common;
 
-import static io.github.codehasan.quicksettings.util.AccessibilityServiceUtil.isAccessibilityServiceEnabled;
+import static android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.AlertDialog;
+import android.app.BackgroundServiceStartNotAllowedException;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.provider.Settings;
+import android.view.accessibility.AccessibilityManager;
+
+import java.util.List;
 
 import io.github.codehasan.quicksettings.R;
+import io.github.codehasan.quicksettings.services.GlobalActionService;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
 public abstract class AccessibilityTile extends StatelessTile {
 
+    public abstract String getAction();
+
     @Override
     public void onClick() {
-        if (!isAccessibilityServiceEnabled(this)) {
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.app_name)
-                    .setMessage(R.string.accessibility_service_disabled_msg)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        openAccessibilityServiceSettings();
-                        dialog.dismiss();
-                    })
-                    .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
-                    .setCancelable(false)
-                    .create();
-            showDialog(alertDialog);
+        super.onClick();
+
+        boolean isAccessibilityEnabled = isAccessibilityServiceEnabled();
+
+        if (!isAccessibilityEnabled) {
+            showAccessibilityActionDialog(false);
+            return;
         }
+
+        try {
+            Intent lockScreenIntent = new Intent(this, GlobalActionService.class)
+                    .setAction(getAction());
+            startService(lockScreenIntent);
+        } catch (BackgroundServiceStartNotAllowedException e) {
+            // Service is killed by OEM
+            showAccessibilityActionDialog(true);
+        }
+    }
+
+    public boolean isAccessibilityServiceEnabled() {
+        AccessibilityManager manager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+
+        if (manager != null) {
+            List<AccessibilityServiceInfo> services =
+                    manager.getEnabledAccessibilityServiceList(FEEDBACK_ALL_MASK);
+
+            for (AccessibilityServiceInfo enabledService : services) {
+                ServiceInfo info = enabledService.getResolveInfo().serviceInfo;
+
+                if (info.packageName.equals(getPackageName()) &&
+                        info.name.equals(GlobalActionService.class.getName()))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private void showAccessibilityActionDialog(boolean killed) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(killed ?
+                        R.string.accessibility_service_killed_msg :
+                        R.string.accessibility_service_disabled_msg)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    dialog.dismiss();
+                    openAccessibilityServiceSettings();
+                })
+                .setNeutralButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
+                .setCancelable(false)
+                .create();
+        showDialog(alertDialog);
     }
 
     private void openAccessibilityServiceSettings() {

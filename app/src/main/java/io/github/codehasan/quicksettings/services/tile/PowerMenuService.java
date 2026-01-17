@@ -10,18 +10,31 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
-import android.content.Intent;
+import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
+import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
 
-import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
+import android.view.KeyEvent;
+
 import io.github.codehasan.quicksettings.services.GlobalActionService;
+import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
 
 public class PowerMenuService extends AccessibilityTile {
 
     @Override
     public void onClick() {
-        Intent powerMenuIntent = new Intent(this, GlobalActionService.class)
-                .setAction(GlobalActionService.ACTION_POWER_DIALOG);
-        startService(powerMenuIntent);
-        super.onClick();
+        executor.execute(() -> {
+            boolean hasRoot = isRootAvailable();
+
+            if (hasRoot) {
+                runRootCommands("input keyevent --longpress " + KeyEvent.KEYCODE_POWER);
+            } else {
+                handler.post(super::onClick);
+            }
+        });
+    }
+
+    @Override
+    public String getAction() {
+        return GlobalActionService.ACTION_POWER_DIALOG;
     }
 }

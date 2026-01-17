@@ -10,32 +10,64 @@
 
 package io.github.codehasan.quicksettings.services.tile;
 
-import static io.github.codehasan.quicksettings.util.AccessibilityServiceUtil.isAccessibilityServiceEnabled;
+import static io.github.codehasan.quicksettings.util.RootUtil.isRootAvailable;
+import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
 
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.KeyEvent;
 
-import io.github.codehasan.quicksettings.annotations.MinSdk;
+import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.services.GlobalActionService;
 import io.github.codehasan.quicksettings.services.common.AccessibilityTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
-@MinSdk(Build.VERSION_CODES.P)
 public class ScreenshotService extends AccessibilityTile {
 
     @Override
-    public void onClick() {
-        TileServiceUtil.closePanels(this);
+    public String getAction() {
+        return GlobalActionService.ACTION_SCREENSHOT;
+    }
 
-        if (isAccessibilityServiceEnabled(this)) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                Intent lockScreenIntent = new Intent(this, GlobalActionService.class)
-                        .setAction(GlobalActionService.ACTION_SCREENSHOT);
-                startService(lockScreenIntent);
-                super.onClick();
-            }, 500);
+    @Override
+    public void onClick() {
+        executor.execute(() -> {
+            boolean hasRoot = isRootAvailable();
+
+            if (hasRoot) {
+                TileServiceUtil.closePanels(this);
+                new Handler(Looper.getMainLooper()).postDelayed(
+                        () -> runRootCommands("input keyevent " + KeyEvent.KEYCODE_SCREENSHOT),
+                        500);
+            } else {
+                handler.post(this::performNormalFlow);
+            }
+        });
+    }
+
+    private void performNormalFlow() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            String message = getString(
+                    R.string.not_supported_below_msg,
+                    Build.VERSION_CODES.P,
+                    Build.VERSION.SDK_INT);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss())
+                    .setCancelable(false)
+                    .create();
+            showDialog(alertDialog);
+            return;
+        }
+
+        if (isAccessibilityServiceEnabled()) {
+            TileServiceUtil.closePanels(this);
+            new Handler(Looper.getMainLooper())
+                    .postDelayed(super::onClick, 500);
         } else {
             super.onClick();
         }

@@ -56,6 +56,7 @@
         <item name="toolbarStyle">@style/ToolbarStyle</item>
         <item name="materialCardViewStyle">@style/CardViewStyle</item>
         <item name="materialButtonStyle">@style/ButtonStyle</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 
     <style name="Theme.Transparent" parent="Theme.QuickSettings">
@@ -96,13 +97,6 @@
         <item name="fontFamily">@font/product_sans_bold</item>
         <item name="android:fontFamily">@font/product_sans_bold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
-    </style>
-
-    <style name="TitleTextViewStyle" parent="AppTheme">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="fontFamily">@font/product_sans_medium</item>
-        <item name="android:fontFamily">@font/product_sans_medium</item>
     </style>
 
     <style name="TextAppearance.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
