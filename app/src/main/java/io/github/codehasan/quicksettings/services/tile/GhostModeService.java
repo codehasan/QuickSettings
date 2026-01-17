@@ -31,8 +31,6 @@ import android.net.NetworkCapabilities;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.service.quicksettings.Tile;
 import android.util.Log;
 import android.view.WindowManager;
@@ -42,17 +40,12 @@ import androidx.annotation.NonNull;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.services.common.StatefulTile;
 import io.github.codehasan.quicksettings.util.TileServiceUtil;
 
 public class GhostModeService extends StatefulTile {
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler handler = new Handler(Looper.getMainLooper());
-
     private BluetoothAdapter bluetoothAdapter;
     private LocationManager locationManager;
     private WifiManager wifiManager;

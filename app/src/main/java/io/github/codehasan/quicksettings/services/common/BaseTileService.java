@@ -2,12 +2,20 @@ package io.github.codehasan.quicksettings.services.common;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
 
 import androidx.annotation.Nullable;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public abstract class BaseTileService extends TileService {
+    public final ExecutorService executor = Executors.newSingleThreadExecutor();
+    public final Handler handler = new Handler(Looper.getMainLooper());
+
     public boolean hasSecureSettingsPermission() {
         return checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS)
                 == PackageManager.PERMISSION_GRANTED;

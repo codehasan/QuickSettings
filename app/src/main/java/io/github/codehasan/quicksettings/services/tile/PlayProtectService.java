@@ -16,12 +16,7 @@ import static io.github.codehasan.quicksettings.util.RootUtil.runRootCommands;
 
 import android.content.Intent;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.service.quicksettings.Tile;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import io.github.codehasan.quicksettings.R;
 import io.github.codehasan.quicksettings.services.common.StatefulTile;
@@ -31,8 +26,6 @@ public class PlayProtectService extends StatefulTile {
     private static final String PLAY_PROTECT_KEY = "package_verifier_user_consent";
     private static final String PLAY_PROTECT_OFF_VALUE = "-1";
     private static final String PLAY_PROTECT_ON_VALUE = "1";
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onClick() {
